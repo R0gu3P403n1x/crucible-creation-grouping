@@ -37,5 +37,16 @@
       }
     ]
   },
-  "flags": {}
+  "flags": {},
+  
+   "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ],
+     
+  "manifest": "https://raw.githubusercontent.com/R0gu3P403n1x/crucible-creation-grouping/1.0.0/module.json",
+  "download": "https://github.com/R0gu3P403n1x/crucible-creation-grouping/releases/download/1.0.0/crucible-creation-grouping.zip" 
 }
