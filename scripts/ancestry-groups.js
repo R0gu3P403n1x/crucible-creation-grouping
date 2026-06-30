@@ -1,31 +1,51 @@
-Hooks.on("renderCrucibleHeroCreation", async (app, html) => {
-  const menu = html[0].querySelector("#ancestry-selection.selection-menu");
-  if (!menu) return;
+console.log("Ancestry grouping hook fired");
 
-  const packIds = game.settings.get("crucible", "ancestrySources") ?? [];
-  if (packIds.length <= 1) return;
-
-  const options = Array.from(menu.querySelectorAll("li.option"));
-  if (!options.length) return;
-
-  const packs = packIds
-    .map(id => game.packs.get(id))
-    .filter(p => p);
-
-  const byPack = {};
-  for (const pack of packs) {
-    const label = pack.metadata.label;
-    byPack[label] = [];
+Hooks.on("renderCrucibleHeroCreationSheet", async (app, html) => {
+  // html is the actual DOM element, not a jQuery object
+  const menu = html.querySelector("#ancestry-selection.selection-menu");
+  if (!menu) {
+    console.log("Ancestry menu not found");
+    return;
   }
 
+  console.log("Ancestry menu found, grouping begins…");
+
+  const crucible = game.system;
+  const packIds = Array.from(crucible.CONFIG.packs.ancestry ?? []);
+  if (packIds.length <= 1) {
+    console.log("Only one ancestry pack, skipping grouping");
+    return;
+  }
+
+  const options = Array.from(menu.querySelectorAll("li.option"));
+  if (!options.length) {
+    console.log("No ancestry options found");
+    return;
+  }
+
+  // Build identifier → pack label map
+  const idToPackLabel = {};
+  for (const id of packIds) {
+    const pack = game.packs.get(id);
+    if (!pack) continue;
+    const label = pack.metadata.label;
+    const docs = await pack.getDocuments({ type: "ancestry" });
+    for (const doc of docs) {
+      const identifier = doc.system?.identifier;
+      if (!identifier) continue;
+      idToPackLabel[identifier] = label;
+    }
+  }
+
+  // Group options by pack label
+  const byPack = {};
   for (const li of options) {
-    const id = li.dataset.ancestryId;
-    const packId = li.dataset.pack || null; // optional: add data-pack via a small preload hook
-    const pack = packs.find(p => p.metadata.id === packId);
-    const label = pack ? pack.metadata.label : "Other Ancestries";
+    const identifier = li.dataset.ancestryId;
+    const label = idToPackLabel[identifier] ?? "Other Ancestries";
     (byPack[label] ??= []).push(li);
   }
 
+  // Rebuild menu with headers + groups
   menu.innerHTML = "";
 
   for (const [label, groupOptions] of Object.entries(byPack)) {
@@ -46,4 +66,6 @@ Hooks.on("renderCrucibleHeroCreation", async (app, html) => {
     menu.appendChild(header);
     menu.appendChild(group);
   }
+
+  console.log("Ancestry grouping complete");
 });

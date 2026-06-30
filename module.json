@@ -1,18 +1,41 @@
 {
   "id": "crucible-creation-grouping",
   "title": "Crucible Creation Grouping",
-  "description": "Groups ancestries and backgrounds by compendium with collapsible headers.",
+  "description": "<p>Groups ancestries and backgrounds by compendium with collapsible headers.</p>",
   "version": "1.0.0",
+  "authors": [
+    {
+      "name": "Phoenix Alexander",
+      "email": "rogue.phoenix.ss@gmail.com",
+      "url": "https://github.com/R0gu3P403n1x/crucible-creation-grouping",
+      "discord": "phoenixalexander",
+      "flags": {}
+    }
+  ],
   "compatibility": {
     "minimum": "14",
-    "verified": "14"
+    "verified": "14.364"
   },
-  "systems": ["crucible"],
-  "esmodules": [
+  "scripts": [
     "scripts/ancestry-groups.js",
     "scripts/background-groups.js"
   ],
   "styles": [
-    "styles/creation-grouping.css"
-  ]
+    {
+      "src": "styles/creation-grouping.css"
+    }
+  ],
+  "relationships": {
+    "systems": [
+      {
+        "id": "crucible",
+        "compatibility": {
+          "minimum": "0.10.0",
+          "verified": "0.10.1"
+        },
+        "type": "system"
+      }
+    ]
+  },
+  "flags": {}
 }

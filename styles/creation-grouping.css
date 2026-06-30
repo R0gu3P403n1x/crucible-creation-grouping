@@ -1,37 +1,65 @@
+/* ============================================================
+   CLEAN CRUCIBLE-STYLE HEADERS FOR ANCESTRY/BACKGROUND GROUPS
+   ============================================================ */
+
 .ccg-pack-header {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  cursor: var(--cursor-pointer);
-  font-family: var(--font-serif);
+  display: block;
+  grid-column: 1 / -1;        /* full width across Crucible grid */
+  width: 100%;
+  padding: 8px 0 4px 0;
+  margin: 18px 0 6px 0;
+
+  /* Crucible typography */
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  padding: 4px 8px;
-  background: var(--color-cool-5-50);
-  border-radius: 8px;
+  letter-spacing: 0.08em;
+
+  /* Clean glow, NO background, NO underline */
+  background: none;
+  border: none;
+  color: #dcdcdc;
+  text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+
+  cursor: pointer;
+  position: relative;
 }
 
-.ccg-pack-header .ccg-chevron::before {
-  content: "▶";
-  font-size: 0.8rem;
+/* ============================================================
+   CHEVRON — RIGHT when collapsed, DOWN when expanded
+   ============================================================ */
+
+.ccg-pack-header .ccg-chevron {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  width: 12px;
+  height: 12px;
+
+  /* Chevron shape */
+  border-right: 2px solid #ccc;
+  border-bottom: 2px solid #ccc;
+
+  /* RIGHT arrow (collapsed) */
+  transform: translateY(-50%) rotate(-45deg);
+
+  transition: transform 0.15s ease;
 }
 
-.ccg-pack-header.open .ccg-chevron::before {
-  content: "▼";
+.ccg-pack-header.open .ccg-chevron {
+  /* DOWN arrow (expanded) */
+  transform: translateY(-50%) rotate(45deg);
 }
+
+/* ============================================================
+   GROUP WRAPPER — preserve Crucible’s native grid
+   ============================================================ */
 
 .ccg-pack-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--gap);
-  margin: 4px 0 12px;
-  transition: max-height 0.2s ease, opacity 0.2s ease;
-  max-height: 1000px;
-  opacity: 1;
+  display: contents;          /* DO NOT create a new grid */
 }
 
 .ccg-pack-group.collapsed {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
+  display: none;
 }

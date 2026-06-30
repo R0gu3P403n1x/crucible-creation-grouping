@@ -1,31 +1,51 @@
-Hooks.on("renderCrucibleHeroCreation", async (app, html) => {
-  const menu = html[0].querySelector("#background-selection.selection-menu");
-  if (!menu) return;
+console.log("Background grouping hook fired");
 
-  const packIds = game.settings.get("crucible", "backgroundSources") ?? [];
-  if (packIds.length <= 1) return;
-
-  const options = Array.from(menu.querySelectorAll("li.option"));
-  if (!options.length) return;
-
-  const packs = packIds
-    .map(id => game.packs.get(id))
-    .filter(p => p);
-
-  const byPack = {};
-  for (const pack of packs) {
-    const label = pack.metadata.label;
-    byPack[label] = [];
+Hooks.on("renderCrucibleHeroCreationSheet", async (app, html) => {
+  // Find the background selection menu
+  const menu = html.querySelector("#background-selection.selection-menu");
+  if (!menu) {
+    console.log("Background menu not found");
+    return;
   }
 
+  console.log("Background menu found, grouping begins…");
+
+  const crucible = game.system;
+  const packIds = Array.from(crucible.CONFIG.packs.background ?? []);
+  if (packIds.length <= 1) {
+    console.log("Only one background pack, skipping grouping");
+    return;
+  }
+
+  const options = Array.from(menu.querySelectorAll("li.option"));
+  if (!options.length) {
+    console.log("No background options found");
+    return;
+  }
+
+  // Build identifier → pack label map
+  const idToPackLabel = {};
+  for (const id of packIds) {
+    const pack = game.packs.get(id);
+    if (!pack) continue;
+    const label = pack.metadata.label;
+    const docs = await pack.getDocuments({ type: "background" });
+    for (const doc of docs) {
+      const identifier = doc.system?.identifier;
+      if (!identifier) continue;
+      idToPackLabel[identifier] = label;
+    }
+  }
+
+  // Group options by pack label
+  const byPack = {};
   for (const li of options) {
-    const id = li.dataset.backgroundId;
-    const packId = li.dataset.pack || null;
-    const pack = packs.find(p => p.metadata.id === packId);
-    const label = pack ? pack.metadata.label : "Other Backgrounds";
+    const identifier = li.dataset.backgroundId;
+    const label = idToPackLabel[identifier] ?? "Other Backgrounds";
     (byPack[label] ??= []).push(li);
   }
 
+  // Rebuild menu with headers + groups
   menu.innerHTML = "";
 
   for (const [label, groupOptions] of Object.entries(byPack)) {
@@ -46,4 +66,6 @@ Hooks.on("renderCrucibleHeroCreation", async (app, html) => {
     menu.appendChild(header);
     menu.appendChild(group);
   }
+
+  console.log("Background grouping complete");
 });
