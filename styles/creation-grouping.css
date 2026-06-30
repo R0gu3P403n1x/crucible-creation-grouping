@@ -1,0 +1,37 @@
+.ccg-pack-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: var(--cursor-pointer);
+  font-family: var(--font-serif);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 4px 8px;
+  background: var(--color-cool-5-50);
+  border-radius: 8px;
+}
+
+.ccg-pack-header .ccg-chevron::before {
+  content: "▶";
+  font-size: 0.8rem;
+}
+
+.ccg-pack-header.open .ccg-chevron::before {
+  content: "▼";
+}
+
+.ccg-pack-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--gap);
+  margin: 4px 0 12px;
+  transition: max-height 0.2s ease, opacity 0.2s ease;
+  max-height: 1000px;
+  opacity: 1;
+}
+
+.ccg-pack-group.collapsed {
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+}

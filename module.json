@@ -1,0 +1,18 @@
+{
+  "id": "crucible-creation-grouping",
+  "title": "Crucible Creation Grouping",
+  "description": "Groups ancestries and backgrounds by compendium with collapsible headers.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "14",
+    "verified": "14"
+  },
+  "systems": ["crucible"],
+  "esmodules": [
+    "scripts/ancestry-groups.js",
+    "scripts/background-groups.js"
+  ],
+  "styles": [
+    "styles/creation-grouping.css"
+  ]
+}
